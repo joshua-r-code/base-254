@@ -86,6 +86,8 @@ int main() {
         putchar(((char*) bData->data)[i]);  // prints out each character individually
     }
     free_base254_data(bData);
+    free(encodedData);
+    return 0;
 }
 ```
 
