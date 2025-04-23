@@ -64,8 +64,9 @@ int main() {
     char* encodedData = base254_encode("Hello world", 12);
     base254_data* bData = base254_decode(encodedData);
     for (size_t i=0; i < bData->size ; i++) {
-        putchar(bData->data[i]);  // prints out each character individually
+        putchar(((char*)bData->data)[i]);  // prints out each character individually
     }
+    free(encodedData);
     free_base254_data(bData);
 }
 ```
