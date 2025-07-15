@@ -29,6 +29,7 @@ unsigned char* base254_encode(const void* dataOrig, size_t length) {
 	}
 	for (size_t i=0; i < length ; i++) {
 		int dataInd = data[i];
+		assert(dataInd < 256);
 		usage_count[dataInd]++;
 	}
 	// find the char with the smallest usage count
@@ -85,6 +86,7 @@ base254_data* base254_decode_n(const unsigned char* data, size_t n) {
 	bytes->data = safe_malloc(dataLen);
 	unsigned char* output = (unsigned char*) bytes->data;
 	for (size_t i=4; (i < n|| n == 0) && data[i] != 0; i++) {
+		assert(k < dataLen);  // prevent a situation where we write past the boundary.
 		if (escape) {
 			output[k] = data[i];
 			escape = false;
@@ -100,6 +102,7 @@ base254_data* base254_decode_n(const unsigned char* data, size_t n) {
 		}
 	}
 	bytes->size = k;
+	bytes->data = realloc(bytes->data, bytes->size);  // shave off remaining data.
 	return bytes;
 }
 
@@ -132,12 +135,14 @@ unsigned char* base254_encode_with_escapes(const void* dataOrig, size_t length, 
 		} else if (data[i] == nullReplacement || data[i] == escapeByte) {
 			encoded[k] = escapeByte;
 			k++;
+			assert(k < requiredSize);
 			encoded[k] = data[i];
 			k++;
 		} else {
 			encoded[k] = data[i];
 			k++;
 		}
+		assert(k < requiredSize);
 	}
 	encoded[k] = 0;
 	return encoded;
